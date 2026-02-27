@@ -127,11 +127,11 @@ export default function Pricing() {
               {/* Sliders */}
               {inputMode === "simple" ? (
                 <div className="space-y-4">
-                  <div className="flex justify-between items-baseline">
+                  <div className="text-center space-y-1">
                     <label className="text-sm font-medium text-foreground">Total Applicants per Year</label>
-                    <span className="text-2xl font-bold text-primary tabular-nums">
+                    <p className="text-2xl font-bold text-primary tabular-nums">
                       {formatNumber(totalApplicants)}
-                    </span>
+                    </p>
                   </div>
                   <Slider
                     value={[totalApplicants]}
