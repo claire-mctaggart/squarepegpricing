@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const MIN_VOLUME = 10000;
@@ -255,6 +256,32 @@ export default function Pricing() {
               </CardContent>
             </Card>
           )}
+
+          {/* Included Features */}
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-foreground">Included</h2>
+            <ul className="grid sm:grid-cols-2 gap-3">
+              {[
+                "Applicant matching",
+                "Unlimited rescoring",
+                "Fraud detection",
+                "Candidate enrichment",
+                "Real time ATS syncing",
+              ].map((feature) => (
+                <li key={feature} className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Check className="h-4 w-4 text-primary shrink-0" />
+                  {feature}
+                </li>
+              ))}
+              <li className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                Candidate rediscovery
+                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 leading-4">
+                  Coming Soon
+                </Badge>
+              </li>
+            </ul>
+          </div>
         </div>
       </main>
     </div>
