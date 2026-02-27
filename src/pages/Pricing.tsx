@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 const MIN_VOLUME = 10000;
 const MAX_VOLUME = 350000;
-const STEP = 5000;
+const STEP = 1000;
 const ANNUAL_DISCOUNT = 0.10;
 
 function calcPrice(volume: number) {
