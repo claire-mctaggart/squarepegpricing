@@ -85,7 +85,7 @@ export default function Pricing() {
                 )}
               >
                 Annual
-                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 leading-4 bg-accent text-accent-foreground">
+                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 leading-4 bg-purple-600 text-white">
                   Save 10%
                 </Badge>
               </button>
