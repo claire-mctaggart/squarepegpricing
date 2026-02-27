@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const MIN_VOLUME = 10000;
 const MAX_VOLUME = 350000;
 const STEP = 5000;
-const ANNUAL_DISCOUNT = 0.15;
+const ANNUAL_DISCOUNT = 0.10;
 
 function calcPrice(volume: number) {
   const clamped = Math.min(Math.max(volume, MIN_VOLUME), MAX_VOLUME);
@@ -16,7 +16,11 @@ function calcPrice(volume: number) {
 }
 
 function formatNumber(n: number) {
-  return n >= 1000 ? `${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k` : n.toString();
+  if (n >= 1000) {
+    const val = Math.ceil(n / 100) / 10;
+    return `${val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)}k`;
+  }
+  return n.toString();
 }
 
 function formatCurrency(n: number) {
@@ -81,7 +85,7 @@ export default function Pricing() {
               >
                 Annual
                 <Badge variant="secondary" className="text-[10px] px-1.5 py-0 leading-4 bg-accent text-accent-foreground">
-                  Save 15%
+                  Save 10%
                 </Badge>
               </button>
             </div>
@@ -222,7 +226,7 @@ export default function Pricing() {
           {!isMaxVolume && (
             <Card className="border-border/40 bg-muted/40">
               <CardContent className="p-6">
-                <div className="grid grid-cols-3 gap-4 text-center">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Applicants/Year</p>
                     <p className="text-lg font-bold text-foreground tabular-nums">{formatNumber(volume)}</p>
@@ -232,10 +236,14 @@ export default function Pricing() {
                     <p className="text-lg font-bold text-foreground tabular-nums">${pricePerApplicant.toFixed(3)}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
-                      {billing === "monthly" ? "Monthly Total" : "Annual Total"}
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Monthly Total</p>
+                    <p className="text-lg font-bold text-foreground tabular-nums">{formatCurrency(monthlyCost)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Annual Total</p>
+                    <p className="text-lg font-bold text-foreground tabular-nums">
+                      {formatCurrency(billing === "annual" ? discountedAnnual : annualCost)}
                     </p>
-                    <p className="text-lg font-bold text-foreground tabular-nums">{formatCurrency(displayCost)}</p>
                   </div>
                 </div>
               </CardContent>
