@@ -11,8 +11,10 @@ const STEP = 1000;
 const ANNUAL_DISCOUNT = 0.10;
 
 function calcPrice(volume: number) {
-  const clamped = Math.min(Math.max(volume, MIN_VOLUME), MAX_VOLUME);
-  return 0.20 - ((clamped - MIN_VOLUME) / (MAX_VOLUME - MIN_VOLUME)) * 0.10;
+  const v = Math.min(Math.max(volume, MIN_VOLUME), MAX_VOLUME);
+  if (v <= 50000) return 0.20 - ((v - 10000) / 40000) * 0.05;
+  if (v <= 100000) return 0.15 - ((v - 50000) / 50000) * 0.05;
+  return 0.10 - ((v - 100000) / 250000) * 0.02;
 }
 
 function formatNumber(n: number) {
