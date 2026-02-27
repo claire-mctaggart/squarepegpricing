@@ -1,0 +1,248 @@
+import { useState, useMemo } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+const MIN_VOLUME = 10000;
+const MAX_VOLUME = 350000;
+const STEP = 5000;
+const ANNUAL_DISCOUNT = 0.15;
+
+function calcPrice(volume: number) {
+  const clamped = Math.min(Math.max(volume, MIN_VOLUME), MAX_VOLUME);
+  return 0.20 - ((clamped - MIN_VOLUME) / (MAX_VOLUME - MIN_VOLUME)) * 0.10;
+}
+
+function formatNumber(n: number) {
+  return n >= 1000 ? `${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k` : n.toString();
+}
+
+function formatCurrency(n: number) {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
+}
+
+export default function Pricing() {
+  const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
+  const [inputMode, setInputMode] = useState<"simple" | "advanced">("simple");
+  const [totalApplicants, setTotalApplicants] = useState(50000);
+  const [jobsPerYear, setJobsPerYear] = useState(100);
+  const [applicantsPerJob, setApplicantsPerJob] = useState(500);
+
+  const volume = useMemo(() => {
+    if (inputMode === "simple") return totalApplicants;
+    return Math.min(Math.max(jobsPerYear * applicantsPerJob, MIN_VOLUME), MAX_VOLUME);
+  }, [inputMode, totalApplicants, jobsPerYear, applicantsPerJob]);
+
+  const isMaxVolume = volume >= MAX_VOLUME;
+  const pricePerApplicant = calcPrice(volume);
+  const annualCost = volume * pricePerApplicant;
+  const monthlyCost = annualCost / 12;
+  const discountedAnnual = annualCost * (1 - ANNUAL_DISCOUNT);
+  const displayCost = billing === "monthly" ? monthlyCost : (billing === "annual" ? discountedAnnual : annualCost);
+  const savings = annualCost - discountedAnnual;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-background flex flex-col">
+      {/* Header */}
+      <header className="pt-10 pb-4 text-center">
+        <h1 className="text-4xl font-bold tracking-tight text-foreground">
+          Square<span className="text-primary">Peg</span>
+        </h1>
+        <p className="mt-2 text-muted-foreground text-lg">Simple, volume-based pricing</p>
+      </header>
+
+      <main className="flex-1 flex items-start justify-center px-4 pb-16 pt-6">
+        <div className="w-full max-w-2xl space-y-8">
+
+          {/* Billing Toggle */}
+          <div className="flex justify-center">
+            <div className="inline-flex rounded-full bg-muted p-1 gap-0.5">
+              <button
+                onClick={() => setBilling("monthly")}
+                className={cn(
+                  "px-5 py-2 rounded-full text-sm font-medium transition-all",
+                  billing === "monthly"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Monthly
+              </button>
+              <button
+                onClick={() => setBilling("annual")}
+                className={cn(
+                  "px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2",
+                  billing === "annual"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Annual
+                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 leading-4 bg-accent text-accent-foreground">
+                  Save 15%
+                </Badge>
+              </button>
+            </div>
+          </div>
+
+          {/* Calculator Card */}
+          <Card className="border-border/60 shadow-lg bg-card/80 backdrop-blur-sm">
+            <CardContent className="p-8 space-y-8">
+
+              {/* Input Mode Toggle */}
+              <div className="flex justify-center">
+                <div className="inline-flex rounded-lg bg-muted p-0.5 text-sm">
+                  <button
+                    onClick={() => setInputMode("simple")}
+                    className={cn(
+                      "px-4 py-1.5 rounded-md font-medium transition-all",
+                      inputMode === "simple"
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    Simple
+                  </button>
+                  <button
+                    onClick={() => setInputMode("advanced")}
+                    className={cn(
+                      "px-4 py-1.5 rounded-md font-medium transition-all",
+                      inputMode === "advanced"
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    Advanced
+                  </button>
+                </div>
+              </div>
+
+              {/* Sliders */}
+              {inputMode === "simple" ? (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-baseline">
+                    <label className="text-sm font-medium text-foreground">Total Applicants per Year</label>
+                    <span className="text-2xl font-bold text-primary tabular-nums">
+                      {formatNumber(totalApplicants)}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[totalApplicants]}
+                    onValueChange={([v]) => setTotalApplicants(v)}
+                    min={MIN_VOLUME}
+                    max={MAX_VOLUME}
+                    step={STEP}
+                    className="py-2"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>10k</span>
+                    <span>350k</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-baseline">
+                      <label className="text-sm font-medium text-foreground">Jobs per Year</label>
+                      <span className="text-xl font-bold text-primary tabular-nums">{jobsPerYear.toLocaleString()}</span>
+                    </div>
+                    <Slider
+                      value={[jobsPerYear]}
+                      onValueChange={([v]) => setJobsPerYear(v)}
+                      min={10}
+                      max={1000}
+                      step={10}
+                      className="py-2"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>10</span>
+                      <span>1,000</span>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-baseline">
+                      <label className="text-sm font-medium text-foreground">Applicants per Job</label>
+                      <span className="text-xl font-bold text-primary tabular-nums">{applicantsPerJob.toLocaleString()}</span>
+                    </div>
+                    <Slider
+                      value={[applicantsPerJob]}
+                      onValueChange={([v]) => setApplicantsPerJob(v)}
+                      min={10}
+                      max={1000}
+                      step={10}
+                      className="py-2"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>10</span>
+                      <span>1,000</span>
+                    </div>
+                  </div>
+                  <div className="text-center text-sm text-muted-foreground">
+                    Total: <span className="font-semibold text-foreground">{formatNumber(volume)}</span> applicants/year
+                    {volume >= MAX_VOLUME && <span className="text-destructive ml-1">(capped at 350k)</span>}
+                  </div>
+                </div>
+              )}
+
+              {/* Divider */}
+              <div className="border-t border-border" />
+
+              {/* Pricing Display */}
+              {isMaxVolume ? (
+                <div className="text-center space-y-4 py-4">
+                  <p className="text-lg text-muted-foreground">Need more than 350k applicants?</p>
+                  <Button size="lg" className="text-base px-8">
+                    Talk to Sales
+                  </Button>
+                </div>
+              ) : (
+                <div className="text-center space-y-2 py-4">
+                  <p className="text-sm text-muted-foreground uppercase tracking-wide font-medium">
+                    {billing === "monthly" ? "Estimated Monthly Cost" : "Estimated Annual Cost"}
+                  </p>
+                  <p className="text-5xl font-extrabold text-foreground tabular-nums tracking-tight">
+                    {formatCurrency(displayCost)}
+                  </p>
+                  <p className="text-base text-muted-foreground">
+                    <span className="font-semibold text-primary">${pricePerApplicant.toFixed(3)}</span> per applicant
+                  </p>
+                  {billing === "annual" && (
+                    <p className="text-sm font-medium text-primary">
+                      You save {formatCurrency(savings)} per year
+                    </p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Summary Card */}
+          {!isMaxVolume && (
+            <Card className="border-border/40 bg-muted/40">
+              <CardContent className="p-6">
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Applicants/Year</p>
+                    <p className="text-lg font-bold text-foreground tabular-nums">{formatNumber(volume)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Cost/Applicant</p>
+                    <p className="text-lg font-bold text-foreground tabular-nums">${pricePerApplicant.toFixed(3)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                      {billing === "monthly" ? "Monthly Total" : "Annual Total"}
+                    </p>
+                    <p className="text-lg font-bold text-foreground tabular-nums">{formatCurrency(displayCost)}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
