@@ -211,7 +211,7 @@ export default function Pricing() {
                     {formatCurrency(displayCost)}
                   </p>
                   <p className="text-base text-muted-foreground">
-                    <span className="font-semibold text-primary">${pricePerApplicant.toFixed(3)}</span> per applicant
+                    <span className="font-semibold text-primary">${pricePerApplicant.toFixed(2)}</span> per applicant
                   </p>
                   {billing === "annual" && (
                     <p className="text-sm font-medium text-primary">
@@ -234,7 +234,7 @@ export default function Pricing() {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Cost/Applicant</p>
-                    <p className="text-lg font-bold text-foreground tabular-nums">${pricePerApplicant.toFixed(3)}</p>
+                    <p className="text-lg font-bold text-foreground tabular-nums">${pricePerApplicant.toFixed(2)}</p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Monthly Total</p>
