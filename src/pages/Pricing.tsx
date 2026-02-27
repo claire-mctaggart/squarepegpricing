@@ -207,10 +207,13 @@ export default function Pricing() {
               ) : (
                 <div className="text-center space-y-2 py-4">
                   <p className="text-sm text-muted-foreground uppercase tracking-wide font-medium">
-                    {billing === "monthly" ? "Estimated Monthly Cost" : "Estimated Annual Cost"}
+                    Estimated Monthly Cost
                   </p>
                   <p className="text-5xl font-extrabold text-foreground tabular-nums tracking-tight">
-                    {formatCurrency(displayCost)}
+                    {formatCurrency(billing === "annual" ? discountedAnnual / 12 : monthlyCost)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {billing === "annual" ? "per month, billed annually" : "per month"}
                   </p>
                   <p className="text-base text-muted-foreground">
                     <span className="font-semibold text-primary">${pricePerApplicant.toFixed(2)}</span> per applicant
@@ -240,7 +243,7 @@ export default function Pricing() {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Monthly Total</p>
-                    <p className="text-lg font-bold text-foreground tabular-nums">{formatCurrency(monthlyCost)}</p>
+                    <p className="text-lg font-bold text-foreground tabular-nums">{formatCurrency(billing === "annual" ? discountedAnnual / 12 : monthlyCost)}</p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Annual Total</p>
