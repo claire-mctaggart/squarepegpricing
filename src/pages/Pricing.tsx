@@ -51,9 +51,7 @@ export default function Pricing() {
     <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-background flex flex-col">
       {/* Header */}
       <header className="pt-10 pb-4 text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground">
-          Square<span className="text-primary">Peg</span>
-        </h1>
+        <img src="https://cdn.prod.website-files.com/65fc7baec6d7cf07cc51252c/66176ddb2ecd499a5f0b541b_Logo.svg" alt="SquarePeg" className="h-10 mx-auto" />
         <p className="mt-2 text-muted-foreground text-lg">Simple, volume-based pricing</p>
       </header>
 
