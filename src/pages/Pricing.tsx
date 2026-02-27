@@ -216,7 +216,7 @@ export default function Pricing() {
                     {billing === "annual" ? "per month, billed annually" : "per month"}
                   </p>
                   <p className="text-base text-muted-foreground">
-                    <span className="font-semibold text-primary">${pricePerApplicant.toFixed(2)}</span> per applicant
+                    <span className="font-semibold text-primary">${(billing === "annual" ? pricePerApplicant * (1 - ANNUAL_DISCOUNT) : pricePerApplicant).toFixed(2)}</span> per applicant
                   </p>
                   {billing === "annual" && (
                     <p className="text-sm font-medium text-primary">
@@ -239,7 +239,7 @@ export default function Pricing() {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Cost/Applicant</p>
-                    <p className="text-lg font-bold text-foreground tabular-nums">${pricePerApplicant.toFixed(2)}</p>
+                    <p className="text-lg font-bold text-foreground tabular-nums">${(billing === "annual" ? pricePerApplicant * (1 - ANNUAL_DISCOUNT) : pricePerApplicant).toFixed(2)}</p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Monthly Total</p>
