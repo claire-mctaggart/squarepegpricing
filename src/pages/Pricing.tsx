@@ -11,11 +11,11 @@ const MAX_VOLUME = 350000;
 const STEP = 1000;
 const ANNUAL_DISCOUNT = 0.10;
 
+const BASE_FLOOR = 0.10 / (1 - ANNUAL_DISCOUNT); // ~0.1111
+
 function calcPrice(volume: number) {
   const v = Math.min(Math.max(volume, MIN_VOLUME), MAX_VOLUME);
-  if (v <= 50000) return 0.20 - ((v - 10000) / 40000) * 0.05;
-  if (v <= 100000) return 0.15 - ((v - 50000) / 50000) * 0.05;
-  return 0.10 - ((v - 100000) / 250000) * 0.02;
+  return 0.20 - ((v - MIN_VOLUME) / (MAX_VOLUME - MIN_VOLUME)) * (0.20 - BASE_FLOOR);
 }
 
 function formatNumber(n: number) {
