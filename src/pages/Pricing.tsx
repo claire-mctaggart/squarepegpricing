@@ -10,6 +10,9 @@ const MIN_VOLUME = 10000;
 const MAX_VOLUME = 350000;
 const STEP = 1000;
 const ANNUAL_DISCOUNT = 0.10;
+const MONTHLY_MIN = 0;
+const MONTHLY_MAX = 20000;
+const MONTHLY_STEP = 500;
 
 const BASE_FLOOR = 0.10 / (1 - ANNUAL_DISCOUNT); // ~0.1111
 
@@ -31,18 +34,23 @@ function formatCurrency(n: number) {
 }
 
 export default function Pricing() {
-  const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
+  const [billing, setBilling] = useState<"monthly" | "annual">("annual");
   const [inputMode, setInputMode] = useState<"simple" | "advanced">("simple");
   const [totalApplicants, setTotalApplicants] = useState(50000);
+  const [monthlyApplicants, setMonthlyApplicants] = useState(5000);
   const [jobsPerYear, setJobsPerYear] = useState(100);
   const [applicantsPerJob, setApplicantsPerJob] = useState(500);
 
   const volume = useMemo(() => {
+    if (billing === "monthly") {
+      if (inputMode === "simple") return monthlyApplicants * 12;
+      return Math.min(Math.max(jobsPerYear * applicantsPerJob, MIN_VOLUME), MAX_VOLUME);
+    }
     if (inputMode === "simple") return totalApplicants;
     return Math.min(Math.max(jobsPerYear * applicantsPerJob, MIN_VOLUME), MAX_VOLUME);
-  }, [inputMode, totalApplicants, jobsPerYear, applicantsPerJob]);
+  }, [billing, inputMode, totalApplicants, monthlyApplicants, jobsPerYear, applicantsPerJob]);
 
-  const isMaxVolume = volume >= MAX_VOLUME;
+  const isMaxVolume = billing === "monthly" ? monthlyApplicants >= MONTHLY_MAX : volume >= MAX_VOLUME;
   const pricePerApplicant = calcPrice(volume);
   const annualCost = volume * pricePerApplicant;
   const monthlyCost = annualCost / 12;
@@ -129,26 +137,49 @@ export default function Pricing() {
 
               {/* Sliders */}
               {inputMode === "simple" ? (
-                <div className="space-y-4">
-                  <div className="text-center space-y-1">
-                    <label className="text-sm font-medium text-foreground">Total Applicants per Year</label>
-                    <p className="text-2xl font-bold text-primary tabular-nums">
-                      {formatNumber(totalApplicants)}
-                    </p>
+                billing === "monthly" ? (
+                  <div className="space-y-4">
+                    <div className="text-center space-y-1">
+                      <label className="text-sm font-medium text-foreground">Total Applicants per Month</label>
+                      <p className="text-2xl font-bold text-primary tabular-nums">
+                        {formatNumber(monthlyApplicants)}
+                      </p>
+                    </div>
+                    <Slider
+                      value={[monthlyApplicants]}
+                      onValueChange={([v]) => setMonthlyApplicants(v)}
+                      min={MONTHLY_MIN}
+                      max={MONTHLY_MAX}
+                      step={MONTHLY_STEP}
+                      className="py-2"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>0</span>
+                      <span>20k</span>
+                    </div>
                   </div>
-                  <Slider
-                    value={[totalApplicants]}
-                    onValueChange={([v]) => setTotalApplicants(v)}
-                    min={MIN_VOLUME}
-                    max={MAX_VOLUME}
-                    step={STEP}
-                    className="py-2"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>10k</span>
-                    <span>350k</span>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="text-center space-y-1">
+                      <label className="text-sm font-medium text-foreground">Total Applicants per Year</label>
+                      <p className="text-2xl font-bold text-primary tabular-nums">
+                        {formatNumber(totalApplicants)}
+                      </p>
+                    </div>
+                    <Slider
+                      value={[totalApplicants]}
+                      onValueChange={([v]) => setTotalApplicants(v)}
+                      min={MIN_VOLUME}
+                      max={MAX_VOLUME}
+                      step={STEP}
+                      className="py-2"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>10k</span>
+                      <span>350k</span>
+                    </div>
                   </div>
-                </div>
+                )
               ) : (
                 <div className="space-y-6">
                   <div className="space-y-4">
@@ -200,7 +231,9 @@ export default function Pricing() {
               {/* Pricing Display */}
               {isMaxVolume ? (
                 <div className="text-center space-y-4 py-4">
-                  <p className="text-lg text-muted-foreground">Need more than 350k applicants?</p>
+                  <p className="text-lg text-muted-foreground">
+                    {billing === "monthly" ? "Need more than 20k applicants per month?" : "Need more than 350k applicants?"}
+                  </p>
                   <Button size="lg" className="text-base px-8">
                     Talk to Sales
                   </Button>
@@ -235,8 +268,12 @@ export default function Pricing() {
               <CardContent className="p-6">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                   <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Applicants/Year</p>
-                    <p className="text-lg font-bold text-foreground tabular-nums">{formatNumber(volume)}</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                      {billing === "monthly" ? "Applicants/Month" : "Applicants/Year"}
+                    </p>
+                    <p className="text-lg font-bold text-foreground tabular-nums">
+                      {billing === "monthly" ? formatNumber(monthlyApplicants) : formatNumber(volume)}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Cost/Applicant</p>
