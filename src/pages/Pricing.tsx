@@ -268,8 +268,12 @@ export default function Pricing() {
               <CardContent className="p-6">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                   <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Applicants/Year</p>
-                    <p className="text-lg font-bold text-foreground tabular-nums">{formatNumber(volume)}</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                      {billing === "monthly" ? "Applicants/Month" : "Applicants/Year"}
+                    </p>
+                    <p className="text-lg font-bold text-foreground tabular-nums">
+                      {billing === "monthly" ? formatNumber(monthlyApplicants) : formatNumber(volume)}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Cost/Applicant</p>
