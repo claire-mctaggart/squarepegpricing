@@ -137,26 +137,49 @@ export default function Pricing() {
 
               {/* Sliders */}
               {inputMode === "simple" ? (
-                <div className="space-y-4">
-                  <div className="text-center space-y-1">
-                    <label className="text-sm font-medium text-foreground">Total Applicants per Year</label>
-                    <p className="text-2xl font-bold text-primary tabular-nums">
-                      {formatNumber(totalApplicants)}
-                    </p>
+                billing === "monthly" ? (
+                  <div className="space-y-4">
+                    <div className="text-center space-y-1">
+                      <label className="text-sm font-medium text-foreground">Total Applicants per Month</label>
+                      <p className="text-2xl font-bold text-primary tabular-nums">
+                        {formatNumber(monthlyApplicants)}
+                      </p>
+                    </div>
+                    <Slider
+                      value={[monthlyApplicants]}
+                      onValueChange={([v]) => setMonthlyApplicants(v)}
+                      min={MONTHLY_MIN}
+                      max={MONTHLY_MAX}
+                      step={MONTHLY_STEP}
+                      className="py-2"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>0</span>
+                      <span>20k</span>
+                    </div>
                   </div>
-                  <Slider
-                    value={[totalApplicants]}
-                    onValueChange={([v]) => setTotalApplicants(v)}
-                    min={MIN_VOLUME}
-                    max={MAX_VOLUME}
-                    step={STEP}
-                    className="py-2"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>10k</span>
-                    <span>350k</span>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="text-center space-y-1">
+                      <label className="text-sm font-medium text-foreground">Total Applicants per Year</label>
+                      <p className="text-2xl font-bold text-primary tabular-nums">
+                        {formatNumber(totalApplicants)}
+                      </p>
+                    </div>
+                    <Slider
+                      value={[totalApplicants]}
+                      onValueChange={([v]) => setTotalApplicants(v)}
+                      min={MIN_VOLUME}
+                      max={MAX_VOLUME}
+                      step={STEP}
+                      className="py-2"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>10k</span>
+                      <span>350k</span>
+                    </div>
                   </div>
-                </div>
+                )
               ) : (
                 <div className="space-y-6">
                   <div className="space-y-4">
