@@ -34,18 +34,23 @@ function formatCurrency(n: number) {
 }
 
 export default function Pricing() {
-  const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
+  const [billing, setBilling] = useState<"monthly" | "annual">("annual");
   const [inputMode, setInputMode] = useState<"simple" | "advanced">("simple");
   const [totalApplicants, setTotalApplicants] = useState(50000);
+  const [monthlyApplicants, setMonthlyApplicants] = useState(5000);
   const [jobsPerYear, setJobsPerYear] = useState(100);
   const [applicantsPerJob, setApplicantsPerJob] = useState(500);
 
   const volume = useMemo(() => {
+    if (billing === "monthly") {
+      if (inputMode === "simple") return monthlyApplicants * 12;
+      return Math.min(Math.max(jobsPerYear * applicantsPerJob, MIN_VOLUME), MAX_VOLUME);
+    }
     if (inputMode === "simple") return totalApplicants;
     return Math.min(Math.max(jobsPerYear * applicantsPerJob, MIN_VOLUME), MAX_VOLUME);
-  }, [inputMode, totalApplicants, jobsPerYear, applicantsPerJob]);
+  }, [billing, inputMode, totalApplicants, monthlyApplicants, jobsPerYear, applicantsPerJob]);
 
-  const isMaxVolume = volume >= MAX_VOLUME;
+  const isMaxVolume = billing === "monthly" ? monthlyApplicants >= MONTHLY_MAX : volume >= MAX_VOLUME;
   const pricePerApplicant = calcPrice(volume);
   const annualCost = volume * pricePerApplicant;
   const monthlyCost = annualCost / 12;
