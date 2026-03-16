@@ -231,7 +231,9 @@ export default function Pricing() {
               {/* Pricing Display */}
               {isMaxVolume ? (
                 <div className="text-center space-y-4 py-4">
-                  <p className="text-lg text-muted-foreground">Need more than 350k applicants?</p>
+                  <p className="text-lg text-muted-foreground">
+                    {billing === "monthly" ? "Need more than 20k applicants per month?" : "Need more than 350k applicants?"}
+                  </p>
                   <Button size="lg" className="text-base px-8">
                     Talk to Sales
                   </Button>
