@@ -10,6 +10,9 @@ const MIN_VOLUME = 10000;
 const MAX_VOLUME = 350000;
 const STEP = 1000;
 const ANNUAL_DISCOUNT = 0.10;
+const MONTHLY_MIN = 0;
+const MONTHLY_MAX = 20000;
+const MONTHLY_STEP = 500;
 
 const BASE_FLOOR = 0.10 / (1 - ANNUAL_DISCOUNT); // ~0.1111
 
