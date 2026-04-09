@@ -62,7 +62,9 @@ export default function Pricing() {
     <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-background flex flex-col">
       {/* Header */}
       <header className="pt-6 pb-4 px-6">
-        <img src="https://cdn.prod.website-files.com/65fc7baec6d7cf07cc51252c/66176ddb2ecd499a5f0b541b_Logo.svg" alt="SquarePeg" className="h-16" />
+        <a href="https://www.squarepeg.ai/" target="_blank" rel="noopener noreferrer">
+          <img src="https://cdn.prod.website-files.com/65fc7baec6d7cf07cc51252c/66176ddb2ecd499a5f0b541b_Logo.svg" alt="SquarePeg" className="h-16" />
+        </a>
       </header>
       <div className="text-center pb-4">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">SquarePeg Pricing</h1>
